@@ -2,10 +2,11 @@ from math import tanh
 import datetime
 
 class Link:
-    def __init__(self, start, end, weight):
+    def __init__(self, start, end, weight, time):
         self.start = start
         self.end = end
         self.weight = weight
+        self.start_node_time = time
         return self
 
 class Node:

@@ -1,6 +1,8 @@
 from neural_support import *
 import random
 import copy
+import datetime
+
 
 class NeuralNet:
     def __init__(self, input_num, output_num) -> None:
@@ -22,22 +24,22 @@ class NeuralNet:
         if action < 0.1:
             nodes = random.choices(clone.nodes, k = 2)
             if nodes[0].init_time < nodes[1].init_time:
-                clone.links.append(Link(nodes[0].id, nodes[1].id, random.uniform(-2, 2)))
+                clone.links.append(Link(nodes[0].id, nodes[1].id, random.uniform(-2, 2), nodes[0].init_time))
 
             elif nodes[0].init_time > nodes[1].init_time:
-                clone.links.append(Link(nodes[1].id, nodes[0].id, random.uniform(-2, 2)))
+                clone.links.append(Link(nodes[1].id, nodes[0].id, random.uniform(-2, 2), nodes[1].init_time))
 
         #Evolve input link
         elif action < 0.2:
             node = random.choice(clone.nodes)
             input_id =  "i" + random.randrange(0, clone.input_num)
-            clone.links.append(Link(input_id, node.id, random.uniform(-2, 2)))
+            clone.links.append(Link(input_id, node.id, random.uniform(-2, 2), datetime.datetime.min))
 
         #Evolve output link
         elif random.random() < 0.3:
             node = random.choice(clone.nodes)
             output_id =  "o" + random.randrange(0, clone.output_num)
-            clone.links.append(Link(node.id, output_id, random.uniform(-2, 2)))
+            clone.links.append(Link(node.id, output_id, random.uniform(-2, 2), datetime.datetime.max))
         
         #Evolve node
         elif random.random() < 0.5:
@@ -49,8 +51,8 @@ class NeuralNet:
             clone.nodes.append(new_node)
             clone.output_num += 1
 
-            new_link_1 = Link(old_link.start, new_node.id, old_link.weight)
-            new_link_2 = Link(new_node.id, old_link.end, old_link.weight)
+            new_link_1 = Link(old_link.start, new_node.id, old_link.weight, old_link.start_node_time)
+            new_link_2 = Link(new_node.id, old_link.end, old_link.weight, new_node.init_time)
 
             clone.links.insert(old_link_index, new_link_1)
             clone.links.insert(old_link_index + 1, new_link_2)
@@ -68,11 +70,7 @@ class NeuralNet:
         
     def propogate(self, input):
         i = 0
-        output = input
-        while i < len(self.layers):
-            output = np.dot(output, self.layers[i])
-            output = np.tanh(output)
-            i += 1
+        output = 0
         
         return output
     
