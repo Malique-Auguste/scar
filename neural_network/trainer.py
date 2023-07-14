@@ -1,59 +1,33 @@
 from neural_net import NeuralNet
-import numpy as np
+import math
 
 class Trainer:
-    def __init__(self, networks, inputs, outputs):
-        self.networks = networks
-        self.inputs = inputs
-        self.outputs = outputs
+    def __init__(self, net_num, input_num, output_num):
+        self.nets = []
+        net = NeuralNet(input_num, output_num)
+        for i in range(net_num):
+            self.nets.append(net.evolve())
     
-    def propogate(self):
-        for network in self.networks:
-            network.score = 0.0
-
-        data = (self.inputs, self.outputs)
-        for network in self.networks:
-            i = 0
-            while i < len(self.inputs):
-                score = np.absolute(np.sum(self.outputs[i] - network.propogate(self.inputs[i])))
-                network.score += score
-                i += 1
-
-            network.score = network.score / (len(self.inputs) + 1)
+    def propogate(self, inputs, outputs):
+        for net in self.nets:
+            net.score = 0
+            for node in net.nodes:
+                node.input = 0
         
-    
-    def scores(self, max = False):
-        self.networks.sort()
-        if max:
-            print(f"Max Score: {self.networks[0].score}")
-        else:
-            print("Scores:")
-            for network in self.networks:
-                print(network.score)
+        for (input, output) in zip(inputs, outputs):
+            for net in self.nets:
+                net.propogate(input)
+                net.score += self.get_score(net.output, output)
+        
+        for net in self.nets:
+            net.score = net.score / len(inputs)
 
-    def evolve(self):
-        self.networks.sort()
-        max_size = len(self.networks)
-        self.networks = self.networks[: int(len(self.networks) / 2)]
-
-        i = 0
-        while len(self.networks) < max_size:
-            self.networks.append(self.networks[i].evolve())
-            i += 1
-
-    def test(self):
-        self.networks.sort()
-        print(f"Input: {self.inputs}")
-        print(f"Outputs: {self.outputs}")
-
-        print("Layers:")
-        for layer in self.networks[0].layers:
-            print(layer)
-
-        print(f"Score: {self.networks[0].score}")
-
-        i = 0
-        while i < len(self.inputs):
-            print(i)
-            print(self.networks[0].propogate(self.inputs[i]))
-            i += 1
+        self.nets.sort(key = lambda l: l.score, reverse = True)
+        
+    def get_score(self, a, b):
+        c = 0
+        for (num_a, num_b) in zip(a, b):
+            #print(f"num_a {num_a}, num_b {num_b}")
+            c += abs(num_a - num_b)
+        
+        return math.pow(5, -c)
