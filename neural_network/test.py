@@ -40,8 +40,8 @@ if False:
 if False:
     trainer = Trainer(5, 2, 1)
     trainer.propogate([[1, 1], [1, 0], [0, 1], [0, 0]], [[1], [1], [0], [0]])
-    for net in trainer.nets:
-        print(f"Score: {net.score}")
+    print(trainer.get_score())
+
 
 if False:
     nn1 = NeuralNet(2, 2)
@@ -83,7 +83,7 @@ if False:
 
 
 
-if True:
+if False:
     nn1 = NeuralNet(2, 1)
     nn1 = nn1.evolve()
     nn1 = nn1.evolve()
@@ -105,4 +105,19 @@ if True:
     nn3 = nn1.merge(nn2)
     print(f"\nNN3: \n{nn3}")
 
+if True:
+    inputs = [[1, 1], [1, 0], [0, 1], [0, 0]]
+    outputs = [[1], [1], [0], [0]]
+    trainer = Trainer(24, 2, 1)
 
+    for i in range(22):
+        trainer.next_generation()
+        trainer.propogate(inputs, outputs)
+
+        if i % 7 == 0:
+            print(f"\n{i}:")
+            print(trainer.get_score())
+            sys.stdout.flush()
+    
+    print(trainer.nets[0])
+            
