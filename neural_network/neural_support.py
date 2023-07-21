@@ -1,5 +1,7 @@
-from math import tanh
-import datetime
+from math import tanh, exp
+
+def sigmoid(a):
+    return 1 / (1 + exp(-a))
 
 #This class represents connections between nodes
 class Link:
@@ -35,6 +37,7 @@ class Node:
 
     def propogate(self):
         self.output = tanh(self.input)
+        #self.output = sigmoid(self.input)
 
     def is_equivalent(self, other):
         return self.id == other.id

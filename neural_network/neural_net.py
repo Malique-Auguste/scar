@@ -22,7 +22,7 @@ class NeuralNet:
         self.links = []
         self.nodes = []
         self.output = []
-        self.score = 0
+        self.error = 0
 
         self.hidden_num = 0
 
@@ -151,6 +151,9 @@ class NeuralNet:
         self.links.sort(key = lambda l: l.start_layer)
         layer = MINIMUM
 
+        for node in self.nodes:
+            node.input = 0
+
         for (input_node, value) in zip(filter(lambda i_n: 'i' in i_n.id, self.nodes), input):
             input_node.output = value 
 
@@ -180,6 +183,6 @@ class NeuralNet:
             string = string + node.__str__() + "\n"
 
         string = string + f"Outputs: {self.output}" + "\n"
-        string = string + f"Score: {self.score}" + "\n"
+        string = string + f"Error: {self.error}" + "\n"
 
         return string

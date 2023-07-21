@@ -40,7 +40,7 @@ if False:
 if False:
     trainer = Trainer(5, 2, 1)
     trainer.propogate([[1, 1], [1, 0], [0, 1], [0, 0]], [[1], [1], [0], [0]])
-    print(trainer.get_score())
+    print(trainer.get_error())
 
 
 if False:
@@ -107,17 +107,38 @@ if False:
 
 if True:
     inputs = [[1, 1], [1, 0], [0, 1], [0, 0]]
-    outputs = [[1], [1], [0], [0]]
+    outputs = [[1], [1], [-1], [-1]]
     trainer = Trainer(24, 2, 1)
 
-    for i in range(22):
+    for i in range(31):
         trainer.next_generation()
         trainer.propogate(inputs, outputs)
 
-        if i % 7 == 0:
-            print(f"\n{i}:")
-            print(trainer.get_score())
+        if i % 5 == 0:
+            print(f"{i}:")
+            print(trainer.get_error())
+            print()
             sys.stdout.flush()
     
     print(trainer.nets[0])
+    for input in inputs:
+        trainer.nets[0].propogate(input)
+        print(trainer.nets[0].output)
             
+if False:
+    inputs = [[1, 1], [1, 0], [0, 1], [0, 0]]
+    outputs = [[0], [0], [0], [0]]
+    trainer = Trainer(4, 2, 1)
+    trainer.next_generation()
+
+    print(trainer.nets[0])
+    error = 0
+    for input in inputs:
+        trainer.nets[0].propogate(input)
+        print(trainer.nets[0].output)
+        error += trainer.gen_error(input, trainer.nets[0].output)
+        print(trainer.gen_error(input, trainer.nets[0].output))
+        print('\n')
+
+    print(error / len(inputs))
+    

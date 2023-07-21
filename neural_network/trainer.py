@@ -10,42 +10,40 @@ class Trainer:
     
     def propogate(self, inputs, outputs):
         for net in self.nets:
-            net.score = 0
-            for node in net.nodes:
-                node.input = 0
-        
-        for (input, output) in zip(inputs, outputs):
-            for net in self.nets:
+            net.error = 0
+
+            for (input, output) in zip(inputs, outputs):
                 net.propogate(input)
-                net.score += self.gen_score(net.output, output)
+                net.error += self.gen_error(net.output, output)
         
         for net in self.nets:
-            net.score = net.score / len(inputs)
+            net.error = net.error / len(inputs)
         
-    def gen_score(self, a, b):
+    def gen_error(self, a, b):
         c = 0
         for (num_a, num_b) in zip(a, b):
             #print(f"num_a {num_a}, num_b {num_b}")
             c += abs(num_a - num_b)
         
-        return math.pow(5, -c)
+        #return math.pow(5, -c)
+        return c
 
-    def get_score(self):
-        self.nets.sort(key = lambda l: l.score, reverse = True)
-        max_score = self.nets[1].score
-        min_score = self.nets[-1].score
-        avg_score = 0
+    def get_error(self):
+        self.nets.sort(key = lambda l: l.error)
+        max_error = self.nets[1].error
+        min_error = self.nets[-1].error
+        avg_error = 0
 
         for net in self.nets:
-            avg_score += net.score
+            avg_error += net.error
 
-        avg_score = avg_score / len(self.nets)
+        avg_error = avg_error / len(self.nets)
 
-        return f"Max Score: {max_score}, Avg_Score: {avg_score}, Min_Score: {min_score}"
+        return f"Max Error: {max_error}, Avg_error: {avg_error}, Min_Error: {min_error}"
         
 
     def next_generation(self):
-        self.nets.sort(key = lambda l: l.score, reverse = True)
+        self.nets.sort(key = lambda l: l.error)
         self.nets = self.nets[:len(self.nets)//4]
 
         new_nets = []
