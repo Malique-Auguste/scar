@@ -106,8 +106,8 @@ if False:
     print(f"\nNN3: \n{nn3}")
 
 if True:
-    inputs = [[1, 1], [1, 0], [0, 1], [0, 0]]
-    outputs = [[1], [1], [-1], [-1]]
+    inputs = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
+    outputs = [[1], [-1], [-1], [-1]]
     trainer = Trainer(24, 2, 1)
 
     for i in range(31):
