@@ -1,8 +1,9 @@
 from neural_net import NeuralNet, average_list
 from neural_support import *
 from trainer import Trainer
-import sys, copy
+import sys, copy, random
 
+#random.seed(34)
 MINIMUM = sys.float_info.min * 2
 MAXIMUM = sys.float_info.max / 2
 
@@ -105,7 +106,7 @@ if False:
     nn3 = nn1.merge(nn2)
     print(f"\nNN3: \n{nn3}")
 
-if True:
+if False:
     inputs = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
     outputs = [[1], [-1], [-1], [-1]]
     trainer = Trainer(24, 2, 1)
@@ -126,19 +127,19 @@ if True:
         print(trainer.nets[0].output)
             
 if False:
-    inputs = [[1, 1], [1, 0], [0, 1], [0, 0]]
-    outputs = [[0], [0], [0], [0]]
-    trainer = Trainer(4, 2, 1)
+    nn1 = NeuralNet(2, 2)
+    nn2 = NeuralNet(2, 2)
+
+    nn1.links.append(Link("i0", "o0", 1, MINIMUM))
+    nn1.links.append(Link("i1", "o1", -1.7, MINIMUM))
+
+    nn2.nodes.append(Node("h0", neighbour_layers = (MINIMUM, MAXIMUM)))
+    nn2.links.append(Link("h0", "o1", 1, (MINIMUM + MAXIMUM) / 2))
+    nn2.links.append(Link("i0", "o0", 2, MINIMUM))
+    nn2.links.append(Link("i0", "h0", 1, MINIMUM))
+
+    print(nn1.get_difference_score(nn2))
+
+if True:
+    trainer = Trainer(2, 2, 1)
     trainer.next_generation()
-
-    print(trainer.nets[0])
-    error = 0
-    for input in inputs:
-        trainer.nets[0].propogate(input)
-        print(trainer.nets[0].output)
-        error += trainer.gen_error(input, trainer.nets[0].output)
-        print(trainer.gen_error(input, trainer.nets[0].output))
-        print('\n')
-
-    print(error / len(inputs))
-    

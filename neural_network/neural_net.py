@@ -23,6 +23,7 @@ class NeuralNet:
         self.nodes = []
         self.output = []
         self.error = 0
+        self.diff = 0
 
         self.hidden_num = 0
 
@@ -89,6 +90,7 @@ class NeuralNet:
     
     def remove_duplicates(self):
         i = 0
+        #iterates through entire list of links and finds links with sme start and end. if found the weight is averaged and the duplicate link is removed
         while i < len(self.links):
             weights = [self.links[i].weight]
 
@@ -147,6 +149,31 @@ class NeuralNet:
 
         return nn
 
+    def get_difference_score(self, other):
+        missing_nodes = 0
+        
+        #Creates lists of the nde ids in self and other
+        s_node_ids = [node.id for node in self.nodes]
+        o_node_ids = [node.id for node in other.nodes]
+
+        #uses sets to find the unique ids (where botth sets do not overlap)
+        unique_node_ids = set(s_node_ids) ^ set(o_node_ids)
+        missing_nodes = len(unique_node_ids)
+
+
+        missing_links = 0
+        #Creates lists of the node ids in self and other
+        s_link_data = [(link.start, link.end) for link in self.links]
+        o_link_data = [(link.start, link.end) for link in other.links]
+
+
+        #uses sets to find the unique ids (where botth sets do not overlap)
+        unique_link_data = set(s_link_data) ^ set(o_link_data)
+        missing_links = len(unique_link_data)
+        
+        return missing_links + missing_nodes
+
+
     def propogate(self, input):
         self.links.sort(key = lambda l: l.start_layer)
         layer = MINIMUM
@@ -184,5 +211,7 @@ class NeuralNet:
 
         string = string + f"Outputs: {self.output}" + "\n"
         string = string + f"Error: {self.error}" + "\n"
+        string = string + f"Diff: {self.diff}" + "\n"
+
 
         return string
